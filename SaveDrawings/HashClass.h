@@ -1,20 +1,23 @@
 #include <iostream>
+#include <string>
 using namespace std;
 
 const int A_SIZE = 8;
-const int SIZE = 8;
 
 class Drawings {
 private:
     static const int PRIME = 227;
     string names[A_SIZE];
-    char drawing[A_SIZE][SIZE];
+    string drawing[A_SIZE];
     int create_Hashkey1(string new_Name);
     int create_Hashkey2(string new_Name);
 public:
     Drawings();
-    void make_Hash(string new_Name);
-    int get_Hash(string find_Name);
+    int out_Sizes();
+    void in_Hash(string new_Name);
+    int out_Hash(string find_Name);
+    void in_Drawing(string line, int iD);
+    void out_Drawing(int iD);
 };
 
 Drawings::Drawings() {      // constructor that resets the name array
@@ -23,7 +26,11 @@ Drawings::Drawings() {      // constructor that resets the name array
     }
 }
 
-void Drawings::make_Hash(string new_Name) {       // complete function that makes hash keys
+int Drawings::out_Sizes() {       // function that returns the constant sizes
+    return A_SIZE;
+}
+
+void Drawings::in_Hash(string new_Name) {       // complete function that makes hash keys
     int sum;
     static int count = 0;        // counter to make sure the program does not run too long, if it does, ask the user to make a different name
 
@@ -36,18 +43,18 @@ void Drawings::make_Hash(string new_Name) {       // complete function that make
 
     if ((names[sum] != "0/+=") && (count < 4) && (names[sum] != new_Name)) {     // if there is still overlap, recurse through the function again
         count++;
-        make_Hash(new_Name);
+        in_Hash(new_Name);
     }
 
     if ((count >= 4) || (names[sum] == new_Name)) {      // checks if it has either been looped too many times or if the name is the same
         cout << "Operation error. Please input a different name.\n";
         cin >> new_Name;
         count = 0;
-        make_Hash(new_Name);
+        in_Hash(new_Name);
     }
 
     if (names[sum] == "0/+=") {       // if there are no overlaps, finalize the iD
-        cout << "The sum is " << sum << " and the name is " << new_Name << endl;
+        cout << "The hashkey is " << sum << " and the name is " << new_Name << endl;
         names[sum] = new_Name;
     }
 }
@@ -75,12 +82,12 @@ int Drawings::create_Hashkey2(string new_Name) {       // takes (the sum of ASCI
     }
     sum *= string_Length;       // adds string length
     sum *= PRIME;           // adds prime number
-    sum% A_SIZE;        // Mods the size of array to get an ID within range of array size
+    sum = sum % A_SIZE;        // Mods the size of array to get an ID within range of array size
 
     return sum;
 }
 
-int Drawings::get_Hash(string find_Name) {        // gets the name of the drawing name and outputs the hashkey for it
+int Drawings::out_Hash(string find_Name) {        // gets the name of the drawing name and outputs the hashkey for it
     int sum;
     static int count = 0;        // counter to make sure the program does not run too long, if it does, then the name is not right
 
@@ -93,7 +100,7 @@ int Drawings::get_Hash(string find_Name) {        // gets the name of the drawin
 
     if ((count < 4) && (names[sum] != find_Name)) {     // if We still cannot find it, run through it again - Similar to making the hashkey 
         count++;
-        make_Hash(find_Name);
+        out_Hash(find_Name);
     }
 
     if (names[sum] == find_Name) {         // executes if the name is found
@@ -103,4 +110,21 @@ int Drawings::get_Hash(string find_Name) {        // gets the name of the drawin
 
     cout << "The name cannot be found.\n";      // only executes if no name is found
     return -1;
+}
+
+void Drawings::in_Drawing(string line, int iD) {         // gets the ASCII drawing of that line and adds it in to the drawing
+    if (drawing[iD].empty()) {         // checks if the string is empty
+        drawing[iD] = line;         // if it is empty, directly add it into the line
+        return;         // return to save computational time
+    }
+
+    int str_Line = line.length();       // gets the length of string
+
+    drawing[iD].append("\n");         // this helps to move to next line
+
+    drawing[iD].append(line);       // adds line to drawing variable
+}
+
+void Drawings::out_Drawing(int iD) {        // prints out the drawing
+    cout << drawing[iD]<<endl;
 }
