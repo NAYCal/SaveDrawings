@@ -11,27 +11,47 @@ using namespace std;
 
 Drawings draw;      // declare as global variable since it will be the only variable used, so no reason to pass for local variable - reducing complications
 
-void menu();
 void get_Draw();
 void out_Draw();
+void menu();
 void display();
 void file_Save();
+void file_Load(int& first);
+void file_Delete();
 
 int main()
 {
+    srand(time(NULL));      // sets random seed
     const int SIZE = draw.out_Sizes();
+    int num = -1;
+
+    file_Load(num);
+
+    if (num != -1) {          // if there are save files, try & load a random picture
+        cout << draw.out_Drawing(num-1) << endl;
+    }
+    else {
+        cout << "   /\\ \n"
+            << "  /  \\ \n"
+            << " /    \\ \n"
+            << "/      \\ \n"
+            << "--------- \n";
+    }
+
     menu();
-    file_Save();
+    
 }
 
 void menu() {
     string input;
 
-    cout << "<<====================MENU====================>>\n"
+    cout << "\n<<====================MENU====================>>\n"
         << "1. Enter a new drawing\n"
         << "2. Find a drawing\n"
         << "3. Display all drawings\n"
-        << "4. Done\n"
+        << "4. Delete all save files\n"
+        << "5. Save all progress\n"
+        << "6. Done\n"
         << "<<=============================================>>\n"
         << "Enter an option\n\n";
 
@@ -50,12 +70,21 @@ void menu() {
         cin.ignore(256, '\n');
         display();
     }
-    else if ((input == "4") || (input == "Done")) {
+    else if ((input == "4") || (input == "Delete all save files")) {
+        file_Delete();
+    }
+    else if ((input == "5") || (input == "Save all progress")) {
+        cin.ignore(256, '\n');
+        file_Save();
+        cout << "Data saved!\n";
+    }
+    else if ((input == "6") || (input == "Done")) {
         return;
     }
 
     menu();
 }
+
 
 void get_Draw() {         // function that gets the drawing and a new name for the drawing from the user
     string input;
@@ -142,8 +171,6 @@ void file_Save() {
 
     int SIZE = draw.out_Sizes();
 
-    ASCII_Images << SIZE << endl;
-
     for (int i = 0; i < SIZE; i++) {        // loops through the total number of drawings
         ASCII_Images << draw.out_Name(i) << endl;           // gets the name first
         if (draw.out_Name(i) != "0/+=-1") {     // if there is a user set name
@@ -154,4 +181,56 @@ void file_Save() {
     }
 
     ASCII_Images.close();       // close the file
+}
+
+//loads any saved files into program - returns true if there are data stored, else returns false
+void file_Load(int& first) {
+    string data;
+    int counter = 0;
+    bool drawing = false;
+
+    ifstream ASCII_Images("ASCII_Images.txt");      // loads up save file "ASCII_Images.txt"
+
+    if (ASCII_Images.is_open()) {       // checks if it is open then load data
+        while (getline(ASCII_Images, data)) {       // as long as there is still data, keep loading
+
+
+
+            if (data != "0/+=-1") {         // checks if data is not an empty spot
+
+                if (data == "pInKlEaF3&.") {        // this marks the boundary                    
+                    counter-=2;      // balance out the number of elements
+                    while ((data != "pInKlEaF3&.") && (getline(ASCII_Images, data))) {      // loops until drawing is gotten, stops when it meets the boundary
+                        draw.in_Drawing(data, counter);
+                        drawing = true;
+                    }
+
+                    if (((rand() % 5) >= 1) && (drawing == true)) {        // roll a chance to see which pciture gets featured while guranteeing there will always be a picture stored
+                        first = counter;
+                    }
+                    else {
+                        first = counter;
+                    }
+                    drawing = true;         // lets main know there are drawings stored
+                }
+                else {      // if it is not a drawing, it must be a name
+                    draw.in_Name(counter, data);
+                }
+            }
+            else if (data == "0/+=-1"){          // there is a name 
+                draw.in_Name(counter, data);         // saves the name
+            }
+            counter++;
+        }
+
+        ASCII_Images.close();       // close the file
+    }
+
+}
+
+void file_Delete() {
+    remove("ASCII_Images.txt");
+    for (int i = 0; i < draw.out_Sizes(); i++) {
+        draw.void_Drawing(i);
+    }
 }
