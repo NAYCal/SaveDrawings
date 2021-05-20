@@ -28,7 +28,8 @@ int main()
     file_Load(num);
 
     if (num != -1) {          // if there are save files, try & load a random picture
-        cout << draw.out_Drawing(num-1) << endl;
+        //cout << "num = " << num << endl;
+        cout << draw.out_Drawing(num) << endl;
     }
     else {
         cout << "   /\\ \n"
@@ -185,47 +186,76 @@ void file_Save() {
 
 //loads any saved files into program - returns true if there are data stored, else returns false
 void file_Load(int& first) {
+    cout << "Loading...\n";
     string data;
-    int counter = 0;
+    int iD = 0;
     bool drawing = false;
 
     ifstream ASCII_Images("ASCII_Images.txt");      // loads up save file "ASCII_Images.txt"
 
     if (ASCII_Images.is_open()) {       // checks if it is open then load data
+        
         while (getline(ASCII_Images, data)) {       // as long as there is still data, keep loading
+            
+            //cout << "\n\nData loaded: " << data << endl;
 
+            if (drawing == false) {         // check if we are storing drawings
 
+                //cout << "This is not a drawing\n";
 
-            if (data != "0/+=-1") {         // checks if data is not an empty spot
+                if (data == "pInKlEaF3&.") {        // check if this is a beginning of a drawing
+                    
+                    //cout << "This is the beginning of the drawing\n";
+                    drawing = true;
 
-                if (data == "pInKlEaF3&.") {        // this marks the boundary                    
-                    counter-=2;      // balance out the number of elements
-                    while ((data != "pInKlEaF3&.") && (getline(ASCII_Images, data))) {      // loops until drawing is gotten, stops when it meets the boundary
-                        draw.in_Drawing(data, counter);
-                        drawing = true;
+                    if (first == -1) {      // this checks if we already have a drawing to display in the beginning
+                        first = iD;
                     }
-
-                    if (((rand() % 5) >= 1) && (drawing == true)) {        // roll a chance to see which pciture gets featured while guranteeing there will always be a picture stored
-                        first = counter;
+                    else {      // so we have  more than one drawing!
+                        if (7 < (rand() % 10)) {        // make a random chance to display this one instead
+                            first = iD;
+                        }
                     }
-                    else {
-                        first = counter;
-                    }
-                    drawing = true;         // lets main know there are drawings stored
                 }
-                else {      // if it is not a drawing, it must be a name
-                    draw.in_Name(counter, data);
+                else {      // otherwise this is a name
+
+                    //cout << "This is the name\n";
+                    //cout << "The iD is " << iD << endl;
+
+                    draw.in_Name(iD, data);
+                    iD++;
+                    
                 }
+
             }
-            else if (data == "0/+=-1"){          // there is a name 
-                draw.in_Name(counter, data);         // saves the name
+            else {          // this is in the process of drawings
+
+                //cout << "This is in the process of a drawing\n";
+                
+                if (data == "pInKlEaF3&.") {        // this is not the end of the drawing so we can store it
+                    //cout << "This is the end of a drawing\n";
+                    drawing = false;
+                }  
+                else {      // this is still a drawing
+
+                    //cout << "This is a drawing and we are storing it\n";
+                    draw.in_Drawing(data, iD);
+                    //cout << draw.out_Drawing(iD) << endl;
+                }
+
             }
-            counter++;
+
         }
 
         ASCII_Images.close();       // close the file
     }
-
+/*
+    cout << "Display everything\n";
+    for (int i = 0; i < 8; i++) {
+        cout << "iD: " << i << " " << draw.out_Name(i) << draw.out_Drawing(i) << endl;
+    }
+    cout << "Done\n";
+*/
 }
 
 void file_Delete() {
