@@ -7,6 +7,7 @@
 #include <fstream>
 #include <stdlib.h>
 #include "HashClass.h"
+#include <windows.h>
 using namespace std;
 
 Drawings draw;      // declare as global variable since it will be the only variable used, so no reason to pass for local variable - reducing complications
@@ -18,6 +19,8 @@ void display();
 void file_Save();
 void file_Load(int& first);
 void file_Delete();
+void randomize_Colors();
+void settings_Menu();
 
 int main()
 {
@@ -32,6 +35,7 @@ int main()
         cout << draw.out_Drawing(num) << endl;
     }
     else {
+
         cout << "   /\\ \n"
             << "  /  \\ \n"
             << " /    \\ \n"
@@ -50,9 +54,10 @@ void menu() {
         << "1. Enter a new drawing\n"
         << "2. Find a drawing\n"
         << "3. Display all drawings\n"
-        << "4. Delete all save files\n"
-        << "5. Save all progress\n"
-        << "6. Done\n"
+        << "4. Save all progress\n"
+        << "5. Delete all save files\n"
+        << "6. Settings\n"
+        << "7. Done\n"
         << "<<=============================================>>\n"
         << "Enter an option\n\n";
 
@@ -71,16 +76,23 @@ void menu() {
         cin.ignore(256, '\n');
         display();
     }
-    else if ((input == "4") || (input == "Delete all save files")) {
+    else if ((input == "5") || (input == "Delete all save files")) {
         file_Delete();
     }
-    else if ((input == "5") || (input == "Save all progress")) {
+    else if ((input == "4") || (input == "Save all progress")) {
         cin.ignore(256, '\n');
         file_Save();
         cout << "Data saved!\n";
     }
-    else if ((input == "6") || (input == "Done")) {
+    else if ((input == "6") || (input == "Settings")) {
+        cin.ignore(256, '\n');
+        settings_Menu();
+    }
+    else if ((input == "7") || (input == "Done")) {
         return;
+    }
+    else {
+        cout << "Invalid input! Please try again.\n";
     }
 
     menu();
@@ -186,7 +198,6 @@ void file_Save() {
 
 //loads any saved files into program - returns true if there are data stored, else returns false
 void file_Load(int& first) {
-    cout << "Loading...\n";
     string data;
     int iD = 0;
     bool drawing = false;
@@ -264,3 +275,51 @@ void file_Delete() {
         draw.void_Drawing(i);
     }
 }
+
+void randomize_Colors() {
+
+    char background = rand() % 9 + 48 + (rand() % 1) * (55);
+    char text_color = rand() % 9 + 48 + (rand() % 1) * (55);
+    
+    char color[9] = "Color ";
+    color[6] = background;
+    color[7] = text_color;
+
+
+    system(color);
+}
+
+void settings_Menu() {
+    string input;
+
+    cout << "\n<<====================MENU====================>>\n"
+        << "1. Change colors\n"
+        << "2. Random colors\n"
+        << "3. Reset colors\n"
+        << "4. Return\n"
+        << "<<=============================================>>\n"
+        << "Enter an option\n\n";
+
+    cin >> input;
+
+    while ((input != "4") || (input != "Done")) {
+        // if's that goes to different modules based on user input
+        if ((input == "1") || (input == "Change colors")) {
+            cin.ignore(256, '\n');
+            cout << "Work in progress:/\n";
+        }
+        else if ((input == "2") || (input == "Random colors")) {
+            cin.ignore(256, '\n');
+            randomize_Colors();
+        }
+        else if ((input == "3") || (input == "Reset colors")) {
+            cin.ignore(256, '\n');
+            system("Color 0F");
+        }
+        else {
+            cout << "Invalid input! Please try again.\n";
+        }
+    }
+}
+
+
