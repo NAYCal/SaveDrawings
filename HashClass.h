@@ -13,6 +13,7 @@ private:
     int create_Hashkey2(string new_Name);
 public:
     Drawings();
+    void in_Name(int iD, string name) { names[iD] = name; }
     int out_Sizes() { return A_SIZE; }
     string out_Name(int iD) { return names[iD]; }
     void in_Hash(string new_Name);
@@ -111,27 +112,31 @@ int Drawings::out_Hash(string find_Name) {        // gets the name of the drawin
 }
 
 void Drawings::in_Drawing(string line, int iD) {         // gets the ASCII drawing of that line and adds it in to the drawing
+    //cout << "This is within the in_Drawing class function\n";
+    //cout << "Line is " << line << endl;
+
     if (drawing[iD].empty()) {         // checks if the string is empty
+
+       //cout << "The line is originally empty\n";
         drawing[iD] = line;         // if it is empty, directly add it into the line
+        //cout << "The drawing[" << iD << "] is " << drawing[iD] << endl;
         return;         // return to save computational time
     }
 
-    int str_Line = line.length();       // gets the length of string
-
+    //cout << "The line is not empty\n";
     drawing[iD].append("\n");         // this helps to move to next line
 
     drawing[iD].append(line);       // adds line to drawing variable
 }
 
 string Drawings::out_Drawing(int iD) {        // prints out the drawing
-    if (names[iD] != "0/+=-1") {
-        return drawing[iD];
+    if (drawing[iD].empty()) {
+        return "Error. No drawing found!\n";
     }
     else {
-        cout << "\nError. No drawing found with this name!\n";
-        return "0/+=-21436587109";
+        return drawing[iD];
     }
-
+    
 }
 
 void Drawings::void_Drawing(int iD) {       // deletes the drawing
