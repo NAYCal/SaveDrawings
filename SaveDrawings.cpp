@@ -21,6 +21,7 @@ void file_Load(int& first);
 void file_Delete();
 void randomize_Colors();
 void settings_Menu();
+void change_colors();
 
 int main()
 {
@@ -29,6 +30,8 @@ int main()
     int num = -1;
 
     file_Load(num);
+    
+    system("Color 0A");
 
     if (num != -1) {          // if there are save files, try & load a random picture
         //cout << "num = " << num << endl;
@@ -292,21 +295,22 @@ void randomize_Colors() {
 void settings_Menu() {
     string input;
 
-    cout << "\n<<====================MENU====================>>\n"
-        << "1. Change colors\n"
-        << "2. Random colors\n"
-        << "3. Reset colors\n"
-        << "4. Return\n"
-        << "<<=============================================>>\n"
-        << "Enter an option\n\n";
-
-    cin >> input;
-
     while ((input != "4") || (input != "Done")) {
+
+        cout << "\n<<====================MENU====================>>\n"
+            << "1. Change colors\n"
+            << "2. Random colors\n"
+            << "3. Reset colors\n"
+            << "4. Return\n"
+            << "<<=============================================>>\n"
+            << "Enter an option\n\n";
+
+        cin >> input;
+
         // if's that goes to different modules based on user input
         if ((input == "1") || (input == "Change colors")) {
             cin.ignore(256, '\n');
-            cout << "Work in progress:/\n";
+            change_colors();
         }
         else if ((input == "2") || (input == "Random colors")) {
             cin.ignore(256, '\n');
@@ -314,7 +318,10 @@ void settings_Menu() {
         }
         else if ((input == "3") || (input == "Reset colors")) {
             cin.ignore(256, '\n');
-            system("Color 0F");
+            system("Color 0A");
+        }
+        else if ((input != "4") || (input != "Done")) {
+            return;
         }
         else {
             cout << "Invalid input! Please try again.\n";
@@ -322,4 +329,62 @@ void settings_Menu() {
     }
 }
 
+void change_colors() {
+    char background;
+    char text_color;
+    bool set = false;
 
+    do {
+        cout << "Colors:\n"
+            << "<<=============================================>>\n"
+            << "0. Black\n"
+            << "1. Blue\n"
+            << "2. Green\n"
+            << "3. Aqua\n"
+            << "4. Red\n"
+            << "5. Purple\n"
+            << "6. Yellow\n"
+            << "7. White\n"
+            << "8. Gray\n"
+            << "9. Light Blue\n"
+            << "A. Light Green\n"
+            << "B. Light Aqua\n"
+            << "C. Light Red\n"
+            << "D. Light Purple\n"
+            << "E. Light Purple\n"
+            << "F. Bright White\n"
+            << "<<=============================================>>\n\n"
+            << "What color would you like for the background? Please enter the character corresponding with the colors.\n";
+
+        cin >> background;
+
+        background = toupper(background);
+
+        if (((background >= 48) && (background <= 57)) || ((background >= 65) && (background <= 70))) {
+
+            if (!cin) {
+                cout << "What color would you like for the text color?\n";
+            }
+            
+            cin >> text_color;
+
+            if (((text_color >= 48) && (text_color <= 57)) || ((text_color >= 65) && (text_color <= 70))) {
+                set = true;
+            }
+        }
+
+        if (set == false) {
+            cout << "Invalid input! Please enter the right color option!\n";
+        }
+        else {
+            char colors[9] = "Color ";
+            colors[6] = background;
+            colors[7] = text_color;
+            system(colors);
+        }
+
+
+    } while (set == false);
+
+    
+}
